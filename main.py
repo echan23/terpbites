@@ -8,10 +8,7 @@ if __name__ == "__main__":
             if connection:
                 cursor = connection.cursor()
 
-                # Clear existing data
                 clear_table(cursor, connection)
-
-                # Scrape and populate the database
                 run_scraping(cursor, connection)
                 
                 # Query for food and location

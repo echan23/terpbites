@@ -143,8 +143,8 @@ def run_scraping(cursor, connection):
                         item_data[nutrient_key] = value
                         print(f"{nutrient_key}: {value}")
 
-                    # Optional: Add a delay to avoid overloading the server
-                    time.sleep(random.uniform(1.5, 3.5))
+                    #Add delay to avoid overloading the server
+                    #time.sleep(random.uniform(1.5, 3.5))
 
                 except Exception as e:
                     print(f"Error processing item {item_name}: {e}")
