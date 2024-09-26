@@ -1,12 +1,24 @@
 from playwright.sync_api import sync_playwright
 from datetime import datetime
 from config import *  # Assuming BASE_URL_SOUTH, BASE_URL_NORTH, and BASE_URL_Y are imported
+import re
 
 # Base URLs and corresponding location names
 BASE_URLS = {
-    "Y": BASE_URL_Y,
     "South": BASE_URL_SOUTH,
-    "North": BASE_URL_NORTH
+    "North": BASE_URL_NORTH,
+    "Y": BASE_URL_Y
+}
+
+# Nutrient labels mapping
+NUTRIENT_LABELS = {
+    'calories': ['Calories per serving', 'Calories'],
+    'serving_size': ['Serving Size', 'Serving size'],
+    'protein': ['Protein'],
+    'total_fat': ['Total Fat', 'Fat'],
+    'carbs': ['Total Carbohydrate', 'Carbohydrates', 'Carbs'],
+    'sodium': ['Sodium'],
+    'sugar': ['Total Sugars', 'Sugars', 'Sugar']
 }
 
 # Function to run scraping using Playwright
@@ -44,7 +56,51 @@ def run_scraping(cursor, connection):
             print(f"Data for {item_data['name']} inserted successfully.")
         except Exception as e:
             print(f"Error inserting data: {e}")
-    
+
+    # Function to extract nutrient values using multiple strategies
+    def extract_nutrient_value(page, labels, is_serving_size=False):
+        try:
+            if is_serving_size:
+                # 1. Find the element containing the word 'Serving'
+                serving_label_element = page.query_selector('xpath=//*[contains(text(), "Serving size")]')
+
+                # 2. Find the second occurrence of the 'nutfactservsize' class
+                serving_size_elements = page.query_selector_all('.nutfactsservsize')
+
+                # 3. If we found both, get the second 'nutfactservsize' or the element right after 'Serving'
+                if len(serving_size_elements) > 1:
+                    # Return the second serving size found
+                    return serving_size_elements[1].inner_text().strip()
+                elif serving_label_element:
+                    # If there's no second 'nutfactservsize', get the next element after 'Serving'
+                    sibling_text = serving_label_element.evaluate('node => node.nextSibling ? node.nextSibling.textContent.trim() : null')
+                    if sibling_text:
+                        return sibling_text.strip()
+                return 'Not Found'
+
+            # Non-serving size extraction logic (standard extraction)
+            for label in labels:
+                element = page.query_selector(f'xpath=//*[contains(translate(text(), "{label.upper()}", "{label.lower()}"), "{label.lower()}")]')
+                if element:
+                    sibling_text = element.evaluate('node => node.nextSibling ? node.nextSibling.textContent.trim() : null')
+                    if sibling_text:
+                        return sibling_text
+                    # Get value from the same element
+                    element_text = element.inner_text().strip()
+                    value = element_text.replace(label, '', 1).strip(':').strip()
+                    if value:
+                        return value
+                    # Get value from parent element if necessary
+                    parent_text = element.evaluate('node => node.parentElement ? node.parentElement.textContent : null')
+                    if parent_text:
+                        match = re.search(rf'{label}[\s\:]*([\d\.]+\s*\w*)', parent_text, re.IGNORECASE)
+                        if match:
+                            return match.group(1).strip()
+            return 'Not Found'
+        except Exception as e:
+            print(f"Error extracting nutrient: {e}")
+            return 'Not Found'
+
     # Run Playwright to scrape data and insert into MySQL
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=HEADLESS)
@@ -54,7 +110,7 @@ def run_scraping(cursor, connection):
         for location, base_url in BASE_URLS.items():
             dynamic_url = f"{base_url}{formatted_date}"
             print(f"Scraping for location: {location}, URL: {dynamic_url}")
-            
+
             page.goto(dynamic_url)
             page.wait_for_selector('a.menu-item-name')
 
@@ -79,58 +135,15 @@ def run_scraping(cursor, connection):
                     page.goto(item_url)
                     page.wait_for_load_state('networkidle')
 
-                    # Calories
-                    calories_element = page.query_selector('p:has-text("Calories per serving") + p')
-                    item_data['calories'] = calories_element.inner_text() if calories_element else 'Not Found'
-
-                    # Serving Size
-                    serving_size_element = page.query_selector('div:has-text("Serving size")')
-                    if serving_size_element:
-                        page.wait_for_selector('.nutfactsservsize')
-                        serving_size_element = page.locator('.nutfactsservsize').nth(1)  # Get the second element
-                        item_data['serving_size'] = serving_size_element.inner_text().strip()
-                    else:
-                        item_data['serving_size'] = 'Not Found'
-
-                    # Protein
-                    protein_element = page.query_selector('b:has-text("Protein")')
-                    if protein_element:
-                        protein_value_handle = protein_element.evaluate_handle('node => node.nextSibling')
-                        item_data['protein'] = protein_value_handle.evaluate('node => node.textContent.trim()')
-                        protein_value_handle.dispose()
-                    else:
-                        item_data['protein'] = 'Not Found'
-
-                    # Total Fat
-                    total_fat_element = page.query_selector('b:has-text("Total Fat")')
-                    if total_fat_element:
-                        total_fat_handle = total_fat_element.evaluate_handle('node => node.nextSibling')
-                        item_data['total_fat'] = total_fat_handle.evaluate('node => node.textContent.trim()')
-                        total_fat_handle.dispose()
-                    else:
-                        item_data['total_fat'] = 'Not Found'
-
-                    # Carbs
-                    carbs_element = page.query_selector('b:has-text("Total Carbohydrate")')
-                    if carbs_element:
-                        carbs_element_handle = carbs_element.evaluate_handle('node => node.nextSibling')
-                        item_data['carbs'] = carbs_element_handle.evaluate('node => node.textContent.trim()')
-                        carbs_element_handle.dispose()
-                    else:
-                        item_data['carbs'] = 'Not Found'
-
-                    # Sodium
-                    sodium_element = page.query_selector('b:has-text("Sodium")')
-                    if sodium_element:
-                        sodium_element_handle = sodium_element.evaluate_handle('node => node.nextSibling')
-                        item_data['sodium'] = sodium_element_handle.evaluate('node => node.textContent.trim()')
-                        sodium_element_handle.dispose()
-                    else:
-                        item_data['sodium'] = 'Not Found'
-
-                    # Sugar
-                    sugar_element = page.locator('span.nutfactstopnutrient:has-text("Total Sugars")')
-                    item_data['sugar'] = sugar_element.inner_text().split()[-1] if sugar_element else 'Not Found'
+                    for nutrient_key, labels in NUTRIENT_LABELS.items():
+                        # Handle special case for "serving_size"
+                        if nutrient_key == 'serving_size':
+                            value = extract_nutrient_value(page, labels, is_serving_size=True)
+                        else:
+                            value = extract_nutrient_value(page, labels)
+                        
+                        item_data[nutrient_key] = value
+                        print(f"{nutrient_key}: {value}")
 
                     # Insert into the database
                     insert_food_data(cursor, connection, item_data)
