@@ -161,24 +161,21 @@ def query_food_data(cursor, food_name, location=None, limit=10):
         if location:
             query = """
                 SELECT * FROM food_items 
-                WHERE name LIKE %s AND location = %s
+                WHERE LOWER(name) LIKE LOWER(%s) AND location = %s
                 LIMIT %s
             """
             cursor.execute(query, ('%' + food_name + '%', location, limit))
         else:
             query = """
                 SELECT * FROM food_items 
-                WHERE name LIKE %s
+                WHERE LOWER(name) LIKE LOWER(%s)
                 LIMIT %s
             """
             cursor.execute(query, ('%' + food_name + '%', limit))
 
         # Fetch results
         result = cursor.fetchall()
-        
-        # Check if we have any results
         if result:
-            # Structuring the result into a list of dictionaries for better handling
             data = []
             for row in result:
                 food_data = {
@@ -193,15 +190,12 @@ def query_food_data(cursor, food_name, location=None, limit=10):
                     'location': row[9]
                 }
                 data.append(food_data)
-            
-            # Print or return the structured data
+
             for item in data:
                 print(f"Name: {item['name']}, Calories: {item['calories']}, Protein: {item['protein']}, "
                       f"Total Fat: {item['total_fat']}, Carbs: {item['carbs']}, Sodium: {item['sodium']}, "
                       f"Sugar: {item['sugar']}, Serving Size: {item['serving_size']}, Location: {item['location']}")
-            
-            return data  # Return the data for further use if needed
-
+            return data
         else:
             print(f"No data found for food item: {food_name} at {location if location else 'any location'}")
             return None
