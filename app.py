@@ -2,6 +2,8 @@ from playwright.sync_api import sync_playwright
 from datetime import datetime
 from config import *  # Assuming BASE_URL_SOUTH, BASE_URL_NORTH, and BASE_URL_Y are imported
 import re
+import time
+import random
 
 # Base URLs and corresponding location names
 BASE_URLS = {
@@ -21,76 +23,72 @@ NUTRIENT_LABELS = {
     'sugar': ['Total Sugars', 'Sugars', 'Sugar']
 }
 
+# Function to insert bulk food data
+def insert_bulk_food_data(cursor, connection, items_data):
+    try:
+        query = '''
+            INSERT INTO food_items (name, calories, protein, total_fat, carbs, sodium, sugar, serving_size, location)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE
+                calories = VALUES(calories),
+                protein = VALUES(protein),
+                total_fat = VALUES(total_fat),
+                carbs = VALUES(carbs),
+                sodium = VALUES(sodium),
+                sugar = VALUES(sugar),
+                serving_size = VALUES(serving_size),
+                location = VALUES(location)
+        '''
+        data_to_insert = [
+            (
+                item['name'],
+                item.get('calories', 'Not Found'),
+                item.get('protein', 'Not Found'),
+                item.get('total_fat', 'Not Found'),
+                item.get('carbs', 'Not Found'),
+                item.get('sodium', 'Not Found'),
+                item.get('sugar', 'Not Found'),
+                item.get('serving_size', 'Not Found'),
+                item.get('location', 'Not Found')
+            )
+            for item in items_data
+        ]
+        cursor.executemany(query, data_to_insert)
+        connection.commit()
+        print(f"Inserted {len(items_data)} items successfully.")
+    except Exception as e:
+        print(f"Error inserting bulk data: {e}")
+
 # Function to run scraping using Playwright
 def run_scraping(cursor, connection):
     today = datetime.today()
     formatted_date = today.strftime("%-m/%d/%Y")
-    
-    def insert_food_data(cursor, connection, item_data):
-        try:
-            query = '''
-                INSERT INTO food_items (name, calories, protein, total_fat, carbs, sodium, sugar, serving_size, location)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-                ON DUPLICATE KEY UPDATE
-                    calories = VALUES(calories),
-                    protein = VALUES(protein),
-                    total_fat = VALUES(total_fat),
-                    carbs = VALUES(carbs),
-                    sodium = VALUES(sodium),
-                    sugar = VALUES(sugar),
-                    serving_size = VALUES(serving_size),
-                    location = VALUES(location)
-            '''
-            cursor.execute(query, (
-                item_data['name'],
-                item_data.get('calories', 'Not Found'),
-                item_data.get('protein', 'Not Found'),
-                item_data.get('total_fat', 'Not Found'),
-                item_data.get('carbs', 'Not Found'),
-                item_data.get('sodium', 'Not Found'),
-                item_data.get('sugar', 'Not Found'),
-                item_data.get('serving_size', 'Not Found'),
-                item_data.get('location', 'Not Found')
-            ))
-            connection.commit()
-            print(f"Data for {item_data['name']} inserted successfully.")
-        except Exception as e:
-            print(f"Error inserting data: {e}")
 
     # Function to extract nutrient values using multiple strategies
     def extract_nutrient_value(page, labels, is_serving_size=False):
         try:
             if is_serving_size:
-                # 1. Find the element containing the word 'Serving'
                 serving_label_element = page.query_selector('xpath=//*[contains(text(), "Serving size")]')
-
-                # 2. Find the second occurrence of the 'nutfactservsize' class
                 serving_size_elements = page.query_selector_all('.nutfactsservsize')
 
-                # 3. If we found both, get the second 'nutfactservsize' or the element right after 'Serving'
                 if len(serving_size_elements) > 1:
-                    # Return the second serving size found
                     return serving_size_elements[1].inner_text().strip()
                 elif serving_label_element:
-                    # If there's no second 'nutfactservsize', get the next element after 'Serving'
                     sibling_text = serving_label_element.evaluate('node => node.nextSibling ? node.nextSibling.textContent.trim() : null')
                     if sibling_text:
                         return sibling_text.strip()
                 return 'Not Found'
 
-            # Non-serving size extraction logic (standard extraction)
             for label in labels:
                 element = page.query_selector(f'xpath=//*[contains(translate(text(), "{label.upper()}", "{label.lower()}"), "{label.lower()}")]')
                 if element:
                     sibling_text = element.evaluate('node => node.nextSibling ? node.nextSibling.textContent.trim() : null')
                     if sibling_text:
                         return sibling_text
-                    # Get value from the same element
                     element_text = element.inner_text().strip()
                     value = element_text.replace(label, '', 1).strip(':').strip()
                     if value:
                         return value
-                    # Get value from parent element if necessary
                     parent_text = element.evaluate('node => node.parentElement ? node.parentElement.textContent : null')
                     if parent_text:
                         match = re.search(rf'{label}[\s\:]*([\d\.]+\s*\w*)', parent_text, re.IGNORECASE)
@@ -118,6 +116,7 @@ def run_scraping(cursor, connection):
             menu_items = page.query_selector_all('a.menu-item-name')
             base_item_url = "https://nutrition.umd.edu/"
             items_data = []
+
             for item in menu_items:
                 item_name = item.inner_text()
                 href = item.get_attribute('href')
@@ -136,38 +135,88 @@ def run_scraping(cursor, connection):
                     page.wait_for_load_state('networkidle')
 
                     for nutrient_key, labels in NUTRIENT_LABELS.items():
-                        # Handle special case for "serving_size"
                         if nutrient_key == 'serving_size':
                             value = extract_nutrient_value(page, labels, is_serving_size=True)
                         else:
                             value = extract_nutrient_value(page, labels)
-                        
+
                         item_data[nutrient_key] = value
                         print(f"{nutrient_key}: {value}")
 
-                    # Insert into the database
-                    insert_food_data(cursor, connection, item_data)
+                    # Optional: Add a delay to avoid overloading the server
+                    time.sleep(random.uniform(1.5, 3.5))
 
                 except Exception as e:
                     print(f"Error processing item {item_name}: {e}")
 
+            # Perform bulk insert after processing all items for the location
+            insert_bulk_food_data(cursor, connection, items_data)
+
         browser.close()
 
 # Function to query food data by name and optionally by location
-def query_food_data(cursor, food_name, location=None):
+def query_food_data(cursor, food_name, location=None, limit=10):
     try:
-        if location:  # If location is specified
-            query = "SELECT * FROM food_items WHERE name LIKE %s AND location = %s"
-            cursor.execute(query, ('%' + food_name + '%', location))
-        else:  # If no location is specified, search only by name
-            query = "SELECT * FROM food_items WHERE name LIKE %s"
-            cursor.execute(query, ('%' + food_name + '%',))
+        # Prepare the SQL query based on whether location is provided
+        if location:
+            query = """
+                SELECT * FROM food_items 
+                WHERE name LIKE %s AND location = %s
+                LIMIT %s
+            """
+            cursor.execute(query, ('%' + food_name + '%', location, limit))
+        else:
+            query = """
+                SELECT * FROM food_items 
+                WHERE name LIKE %s
+                LIMIT %s
+            """
+            cursor.execute(query, ('%' + food_name + '%', limit))
 
+        # Fetch results
         result = cursor.fetchall()
+        
+        # Check if we have any results
         if result:
+            # Structuring the result into a list of dictionaries for better handling
+            data = []
             for row in result:
-                print(f"Name: {row[1]}, Calories: {row[2]}, Protein: {row[3]}, Total Fat: {row[4]}, Carbs: {row[5]}, Sodium: {row[6]}, Sugar: {row[7]}, Serving Size: {row[8]}, Location: {row[9]}")
+                food_data = {
+                    'name': row[1],
+                    'calories': row[2],
+                    'protein': row[3],
+                    'total_fat': row[4],
+                    'carbs': row[5],
+                    'sodium': row[6],
+                    'sugar': row[7],
+                    'serving_size': row[8],
+                    'location': row[9]
+                }
+                data.append(food_data)
+            
+            # Print or return the structured data
+            for item in data:
+                print(f"Name: {item['name']}, Calories: {item['calories']}, Protein: {item['protein']}, "
+                      f"Total Fat: {item['total_fat']}, Carbs: {item['carbs']}, Sodium: {item['sodium']}, "
+                      f"Sugar: {item['sugar']}, Serving Size: {item['serving_size']}, Location: {item['location']}")
+            
+            return data  # Return the data for further use if needed
+
         else:
             print(f"No data found for food item: {food_name} at {location if location else 'any location'}")
+            return None
+
     except Exception as e:
         print(f"Error retrieving data: {e}")
+        return None
+
+#Clears table before rescraping occurs
+def clear_table(cursor, connection):
+    try:
+        # Truncate the table to remove all rows
+        query = "TRUNCATE TABLE food_items;"
+        cursor.execute(query)
+        connection.commit()
+        print("Table cleared successfully.")
+    except Exception as e:
+        print(f"Error clearing table: {e}")
