@@ -4,6 +4,12 @@ from config import *  # Assuming BASE_URL_SOUTH, BASE_URL_NORTH, and BASE_URL_Y 
 import re
 import time
 import random
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from db_connection import connect_to_mysql
+
+app = Flask(__name__)
+CORS(app)
 
 # Base URLs and corresponding location names
 BASE_URLS = {
@@ -23,7 +29,7 @@ NUTRIENT_LABELS = {
     'sugar': ['Total Sugars', 'Sugars', 'Sugar']
 }
 
-# Function to insert bulk food data
+# Insert bulk food data
 def insert_bulk_food_data(cursor, connection, items_data):
     try:
         query = '''
@@ -63,6 +69,7 @@ def insert_bulk_food_data(cursor, connection, items_data):
 def run_scraping(cursor, connection):
     today = datetime.today()
     formatted_date = today.strftime("%-m/%d/%Y")
+    print("Beginning scraping for formatted_date")
 
     # Function to extract nutrient values using multiple strategies
     def extract_nutrient_value(page, labels, is_serving_size=False):
@@ -214,3 +221,33 @@ def clear_table(cursor, connection):
         print("Table cleared successfully.")
     except Exception as e:
         print(f"Error clearing table: {e}")
+
+'''
+@app.route('/api/food', methods=['GET'])
+def get_food_data():
+    try:
+        food_name = request.args.get('food_name', '').strip()
+        location = request.args.get('location', '').strip()
+        limit = request.args.get('limit', 10, type=int)
+
+        if not food_name:
+            return jsonify({"error": "food_name parameter is required"}), 400
+
+        # Use the context manager to automatically handle the connection closing
+        with connect_to_mysql() as connection:
+            if connection:
+                cursor = connection.cursor()
+
+                # Query for food data
+                results = query_food_data(cursor, food_name, location if location else None, limit)
+                if results:
+                    return jsonify(results), 200
+                else:
+                    return jsonify({"message": "No data found"}), 404
+    except Exception as e:
+        print(f"Error retrieving food data: {e}")
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)
+'''
