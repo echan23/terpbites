@@ -229,6 +229,7 @@ def clear_table(cursor, connection):
 
 @app.route('/api/food', methods=['GET'])
 def get_food_data():
+    print("Received request for /api/food")
     try:
         food_name = request.args.get('food_name', '').strip()
         location = request.args.get('location', '').strip()

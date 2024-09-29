@@ -9,7 +9,7 @@ export const SearchBar = ({ setResults, setLocation }) => {
 
     const handleSearch = async () => {
         try {
-            let url = `http://18.118.205.9/api/food?food_name=${encodeURIComponent(input)}`;
+            let url = `http://18.118.205.9:5000/api/food?food_name=${encodeURIComponent(input)}`;
             if (selectedLocation) {
                 url += `&location=${encodeURIComponent(selectedLocation)}`;
             }
@@ -28,11 +28,13 @@ export const SearchBar = ({ setResults, setLocation }) => {
         } catch (error) {
             console.error('Error fetching data:', error);
             setError(error.message); // Set error in state
+            setResults([]);
         }
     };
 
     const handleChange = (value) => {
         setInput(value);
+        handleSearch();
     };
 
     const handleLocationChange = (e) => {
@@ -55,8 +57,6 @@ export const SearchBar = ({ setResults, setLocation }) => {
                 <option value="Y">Yahentamitsi</option>
                 <option value="South">South</option>
             </select>
-            <button onClick={handleSearch}>Search</button> {/* Initiates search */}
-            {error && <p className="error-message">{error}</p>}
         </div>
     );
 };
