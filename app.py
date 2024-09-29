@@ -198,10 +198,13 @@ def query_food_data(cursor, food_name, location=None, limit=10):
                 }
                 data.append(food_data)
 
+            '''
             for item in data:
                 print(f"Name: {item['name']}, Calories: {item['calories']}, Protein: {item['protein']}, "
                       f"Total Fat: {item['total_fat']}, Carbs: {item['carbs']}, Sodium: {item['sodium']}, "
                       f"Sugar: {item['sugar']}, Serving Size: {item['serving_size']}, Location: {item['location']}")
+            '''
+            
             return data
         else:
             print(f"No data found for food item: {food_name} at {location if location else 'any location'}")

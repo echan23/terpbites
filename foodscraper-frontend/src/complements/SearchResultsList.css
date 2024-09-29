@@ -18,4 +18,6 @@
     overflow-y: auto;
     max-height: 300px;
     min-height: 50px;
+    margin: 10px;
 }
+

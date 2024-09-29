@@ -2,17 +2,16 @@ import React, { useState } from 'react';
 import { FaSearch } from "react-icons/fa";
 import './SearchBar.css';
 
-export const SearchBar = ({ setResults }) => {
+export const SearchBar = ({ setResults, setLocation }) => {
     const [input, setInput] = useState("");
-    const [error, setError] = useState(null); // State for error handling
-    const [location, setLocation] = useState("")
+    const [error, setError] = useState(null);
+    const [selectedLocation, setSelectedLocation] = useState("");
 
-    const fetchData = async (value, location) => {
+    const handleSearch = async () => {
         try {
-            // Fetch data from the API
-            let url = `http://localhost:5000/api/food?food_name=${encodeURIComponent(value)}`;
-            if (location){
-                url += `&location=${encodeURIComponent(location)}`;
+            let url = `http://3.147.72.94:5000/api/food?food_name=${encodeURIComponent(input)}`;
+            if (selectedLocation) {
+                url += `&location=${encodeURIComponent(selectedLocation)}`;
             }
 
             const response = await fetch(url, {
@@ -24,18 +23,22 @@ export const SearchBar = ({ setResults }) => {
             }
 
             const data = await response.json();
-            setResults(data);
-            setError(null);
-
+            setResults(data); // Set results in the parent component
+            setError(null); // Reset error if successful
         } catch (error) {
-            console.error('There was an error fetching the data:', error);
-            setError(error.message);
+            console.error('Error fetching data:', error);
+            setError(error.message); // Set error in state
         }
     };
 
     const handleChange = (value) => {
         setInput(value);
-        fetchData(value);
+    };
+
+    const handleLocationChange = (e) => {
+        const location = e.target.value;
+        setSelectedLocation(location);
+        setLocation(location); // Optionally pass location to parent
     };
 
     return (
@@ -46,12 +49,13 @@ export const SearchBar = ({ setResults }) => {
                 value={input}
                 onChange={(e) => handleChange(e.target.value)}
             />
-            <select onChange={(e) => setLocation(e.target.value)}>
+            <select onChange={handleLocationChange}>
                 <option value="">All Locations</option>
                 <option value="North">251 North</option>
                 <option value="Y">Yahentamitsi</option>
                 <option value="South">South</option>
             </select>
+            <button onClick={handleSearch}>Search</button> {/* Initiates search */}
             {error && <p className="error-message">{error}</p>}
         </div>
     );
