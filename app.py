@@ -69,7 +69,7 @@ def insert_bulk_food_data(cursor, connection, items_data):
 def run_scraping(cursor, connection):
     today = datetime.today()
     formatted_date = today.strftime("%-m/%d/%Y")
-    print("Beginning scraping for formatted_date")
+    print(f"Beginning scraping for {formatted_date}")
 
     # Function to extract nutrient values using multiple strategies
     def extract_nutrient_value(page, labels, is_serving_size=False):
