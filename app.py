@@ -117,6 +117,7 @@ def run_scraping(cursor, connection):
             print(f"Scraping for location: {location}, URL: {dynamic_url}")
 
             page.goto(dynamic_url)
+            page.goto(dynamic_url, wait_until='networkidle')
             page.wait_for_selector('a.menu-item-name')
 
             # Collect item names and hrefs before navigation
@@ -225,7 +226,7 @@ def clear_table(cursor, connection):
     except Exception as e:
         print(f"Error clearing table: {e}")
 
-'''
+
 @app.route('/api/food', methods=['GET'])
 def get_food_data():
     try:
@@ -253,4 +254,3 @@ def get_food_data():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-'''

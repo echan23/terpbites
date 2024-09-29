@@ -9,7 +9,7 @@ export const SearchBar = ({ setResults, setLocation }) => {
 
     const handleSearch = async () => {
         try {
-            let url = `http://3.147.72.94:5000/api/food?food_name=${encodeURIComponent(input)}`;
+            let url = `http://18.118.205.9/api/food?food_name=${encodeURIComponent(input)}`;
             if (selectedLocation) {
                 url += `&location=${encodeURIComponent(selectedLocation)}`;
             }
