@@ -7,7 +7,7 @@ def connect_to_mysql():
         connection = mysql.connector.connect(
             host=RDS_ENDPOINT,
             database='nutrition_db',
-            user='admin',
+            user='admin', #Change back to admin when connecting to rds
             password='iD#193306'
         )
         if connection.is_connected():

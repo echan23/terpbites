@@ -1,6 +1,90 @@
-*{
+:root {
+  --umd-red: #E21833;
+  --umd-gold: #FFCD00;
+  --umd-black: #000000;
+  --umd-white: #FFFFFF;
+  --umd-light-gray: #D9D9D6;
+  --umd-dark-gray: #6C6E70;
+  --font-primary: 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+  --font-secondary: 'Times New Roman', Times, serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
-  margin: 0px;
-  padding: 0px;
-  font-family: Helvetica, sans-serif;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--umd-white);
+  color: var(--umd-black);
+  line-height: 1.6;
+  padding: 0;
+  margin: 0;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-height: 100vh;
+  padding-bottom: 5rem; 
+}
+
+header {
+  background-color: var(--umd-red);
+  color: var(--umd-white);
+  width: 100%;
+  padding: 1rem 0;
+}
+
+header h1 {
+  margin: 0;
+  font-family: var(--font-secondary);
+  font-size: 2.5rem;
+}
+
+.search-bar-container {
+  margin: 2rem 0;
+  width: 45%;
+}
+
+footer {
+  background-color: var(--umd-red);
+  color: var(--umd-white);
+  width: 100%;
+  padding: 1rem 0;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+}
+
+@media (max-width: 768px) {
+  .search-bar-container,
+  .results-list-wrapper,
+  .selected-items-list {
+      width: 90%;
+  }
+
+  header h1 {
+    font-size: 2rem;
+  }
+}
+
+.open-modal-button {
+  background-color: var(--umd-gold);
+  color: var(--umd-black);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.open-modal-button:hover {
+  background-color: var(--umd-dark-gray);
+  color: var(--umd-white);
 }

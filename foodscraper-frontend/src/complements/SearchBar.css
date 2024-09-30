@@ -1,13 +1,12 @@
-.input-wrapper{
-    background-color: white;
+.input-wrapper {
+    background-color: var(--umd-white);
     width: 100%;
     border-radius: 10px;
-    height: 2.5rem;
-    padding: 0 15px;
-    box-shadow: 0px 0px 8px #ddd;
     display: flex;
     align-items: center;
-    min-width: 200px;
+    padding: 0 15px;
+    height: 2.5rem;
+    box-shadow: 0px 0px 8px #ddd;
 }
 
 input{
@@ -19,9 +18,16 @@ input{
     margin-left: 5px;
 }
 
+select{
+    background-color: transparent;
+    border: none;
+    height: 100%;
+    width: 50%;
+    font-size: 1rem;
+}
+
 input:focus{
     outline: none;
-
 }
 
 #search-icon{

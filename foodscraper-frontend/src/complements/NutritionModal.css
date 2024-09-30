@@ -1,0 +1,53 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background-color: var(--umd-white);
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0px 0px 8px #ddd;
+  }
+  
+  .modal-content h3 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    text-align: center;
+  }
+  
+  .modal-content table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .modal-content td {
+    padding: 8px;
+    border: 1px solid var(--umd-light-gray);
+    text-align: left;
+  }
+  
+  .close-button {
+    margin-top: 20px;
+    background-color: var(--umd-red);
+    color: var(--umd-white);
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+  }
+  
+  .close-button:hover {
+    background-color: var(--umd-dark-gray);
+  }
+  

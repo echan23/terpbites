@@ -1,0 +1,117 @@
+.selected-items-wrapper {
+    width: 45%;
+    margin: 0.5rem 0;
+    padding: 1rem;
+    background-color: var(--umd-white);
+    box-shadow: 0px 0px 8px #ddd;
+    border-radius: 8px;
+    height: 35vh;
+    overflow: hidden; 
+    position: relative; 
+}
+
+.selected-items-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow-y: auto; 
+    max-height: 100%; 
+    padding-right: 10px; /* Padding for scrollbar space */
+}
+
+.selected-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.selected-item {
+    background-color: var(--umd-light-gray);
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.selected-item:hover {
+    background-color: var(--umd-gold);
+}
+
+.selected-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.remove-button {
+    background-color: var(--umd-red);
+    color: var(--umd-white);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.remove-button:hover {
+    background-color: var(--umd-dark-gray);
+}
+
+.nutrition-facts-dropdown {
+    padding: 10px;
+    background-color: var(--umd-white);
+    border: 1px solid var(--umd-dark-gray);
+    border-radius: 5px;
+    margin-top: 10px;
+    transition: max-height 0.3s ease;
+}
+
+.nutrition-facts-dropdown ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nutrition-facts-dropdown li {
+    margin: 5px 0;
+}
+
+.action-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between serving input and remove button */
+  }
+  
+  .serving-input {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--umd-dark-gray);
+    padding: 5px;
+    border-radius: 5px;
+    background-color: var(--umd-white);
+  }
+  
+  .serving-input label {
+    margin-right: 5px;
+    font-weight: bold;
+  }
+  
+  .serving-input input {
+    width: 60px;
+    border: none;
+    outline: none;
+    text-align: center;
+  }
+
+  /* Hide the spin buttons in WebKit browsers (Chrome, Safari, Edge) */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Optional: Adjust the input width and styling */
+.serving-input input {
+  width: 50px; /* Adjust as needed */
+  text-align: center;
+}

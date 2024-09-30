@@ -1,62 +1,70 @@
-import React, { useState } from 'react';
-import { FaSearch } from "react-icons/fa";
+import React, { useState, useCallback, useEffect } from 'react';
+import { FaSearch } from 'react-icons/fa';
 import './SearchBar.css';
 
-export const SearchBar = ({ setResults, setLocation }) => {
-    const [input, setInput] = useState("");
-    const [error, setError] = useState(null);
-    const [selectedLocation, setSelectedLocation] = useState("");
+export const SearchBar = ({ setResults }) => {
+    const [input, setInput] = useState('');
+    const [location, setLocation] = useState('');
 
-    const handleSearch = async () => {
+    const debounce = (func, delay) => {
+        let timer;
+        return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => func(...args), delay);
+        };
+    };
+
+    const handleSearch = async (inputValue, locationValue) => {
         try {
-            let url = `http://18.118.205.9:5000/api/food?food_name=${encodeURIComponent(input)}`;
-            if (selectedLocation) {
-                url += `&location=${encodeURIComponent(selectedLocation)}`;
+            if (inputValue.trim() === '') {
+                setResults([]); // Clear the results if the search bar is empty
+                return;
+            }
+            //let url = `http://localhost:5000/api/food?food_name=${encodeURIComponent(inputValue)}`;
+            let url = `http://8.118.205.9:5000/api/food?food_name=${encodeURIComponent(inputValue)}`;
+            if (locationValue) {
+                url += `&location=${encodeURIComponent(locationValue)}`;
             }
 
-            const response = await fetch(url, {
-                method: 'GET',
-            });
-
+            const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
-            setResults(data); // Set results in the parent component
-            setError(null); // Reset error if successful
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            setError(error.message); // Set error in state
-            setResults([]);
-        }
-    };
+            setResults(data);
+            } catch (error) {
+            console.error('Error fetching data:', error); // Log the error but do not display it
+            setResults([]); // Clear the results on error
+            }
+        };
 
-    const handleChange = (value) => {
-        setInput(value);
-        handleSearch();
-    };
+        const debouncedSearch = useCallback(debounce(handleSearch, 300), []);
 
-    const handleLocationChange = (e) => {
-        const location = e.target.value;
-        setSelectedLocation(location);
-        setLocation(location); // Optionally pass location to parent
-    };
+        useEffect(() => {
+            if (input) {
+            debouncedSearch(input, location);
+            }
+        }, [input, location, debouncedSearch]);
 
-    return (
-        <div className="input-wrapper">
+        return (
+            <div className="input-wrapper">
             <FaSearch id="search-icon" />
             <input
                 placeholder="Search food..."
                 value={input}
-                onChange={(e) => handleChange(e.target.value)}
+                onChange={(e) => setInput(e.target.value)}
             />
-            <select onChange={handleLocationChange}>
+            <select
+                name="location-selector"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+            >
                 <option value="">All Locations</option>
                 <option value="North">251 North</option>
-                <option value="Y">Yahentamitsi</option>
                 <option value="South">South</option>
+                <option value="Y">Yahentamitsi</option>
             </select>
-        </div>
-    );
+            </div>
+        );
 };
