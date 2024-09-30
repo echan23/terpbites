@@ -13,12 +13,17 @@ function App() {
 
   const addItem = (item) => {
     setSelectedItems((prevItems) => {
-      if (!prevItems.some((i) => i.name === item.name)) {
+      const existingItem = prevItems.find((i) => i.name === item.name);
+  
+      if (existingItem) {
+        return prevItems.map((i) =>
+          i.name === item.name ? { ...i, servings: i.servings + 1 } : i
+        );
+      } else {
         return [...prevItems, { ...item, servings: 1 }];
       }
-      return prevItems;
     });
-  };
+  };  
 
   const removeItem = (item) => {
     setSelectedItems((prevItems) => prevItems.filter((i) => i.name !== item.name));

@@ -9,18 +9,18 @@ export const SearchBar = ({ setResults }) => {
     const debounce = (func, delay) => {
         let timer;
         return (...args) => {
-        clearTimeout(timer);
-        timer = setTimeout(() => func(...args), delay);
+            clearTimeout(timer);
+            timer = setTimeout(() => func(...args), delay);
         };
     };
 
     const handleSearch = async (inputValue, locationValue) => {
         try {
             if (inputValue.trim() === '') {
-                setResults([]); // Clear the results if the search bar is empty
+                setResults([]); 
                 return;
             }
-            //let url = `http://localhost:5000/api/food?food_name=${encodeURIComponent(inputValue)}`;
+
             let url = `http://8.118.205.9:5000/api/food?food_name=${encodeURIComponent(inputValue)}`;
             if (locationValue) {
                 url += `&location=${encodeURIComponent(locationValue)}`;
@@ -32,28 +32,36 @@ export const SearchBar = ({ setResults }) => {
             }
 
             const data = await response.json();
-            setResults(data);
-            } catch (error) {
-            console.error('Error fetching data:', error); // Log the error but do not display it
-            setResults([]); // Clear the results on error
-            }
-        };
+            setResults(data); 
+        } catch (error) {
+            console.error('Error fetching data:', error); 
+            setResults([]); 
+        }
+    };
 
-        const debouncedSearch = useCallback(debounce(handleSearch, 300), []);
+    // Create a debounced version of the search function
+    const debouncedSearch = useCallback(debounce(handleSearch, 200), []);
 
-        useEffect(() => {
-            if (input) {
+    // useEffect hook to trigger search when input or location changes
+    useEffect(() => {
+        if (input) {
             debouncedSearch(input, location);
-            }
-        }, [input, location, debouncedSearch]);
+        }
+    }, [input, location, debouncedSearch]);
 
-        return (
-            <div className="input-wrapper">
+    // Handle input change and clear results immediately before debouncing the search
+    const handleInputChange = (e) => {
+        setInput(e.target.value);
+        setResults([]); 
+    };
+
+    return (
+        <div className="input-wrapper">
             <FaSearch id="search-icon" />
             <input
                 placeholder="Search food..."
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={handleInputChange} // Trigger input change handling
             />
             <select
                 name="location-selector"
@@ -65,6 +73,6 @@ export const SearchBar = ({ setResults }) => {
                 <option value="South">South</option>
                 <option value="Y">Yahentamitsi</option>
             </select>
-            </div>
-        );
+        </div>
+    );
 };
