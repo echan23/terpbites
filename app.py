@@ -1,6 +1,8 @@
+from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
+import requests
 from datetime import datetime
-from config import *  # Assuming BASE_URL_SOUTH, BASE_URL_NORTH, and BASE_URL_Y are imported
+from config import *
 import re
 import time
 import random
@@ -16,7 +18,7 @@ BASE_URLS = {
     "South": BASE_URL_SOUTH,
     "North": BASE_URL_NORTH,
     "Y": BASE_URL_Y
-}
+} 
 
 # Nutrient labels mapping
 NUTRIENT_LABELS = {
@@ -65,102 +67,126 @@ def insert_bulk_food_data(cursor, connection, items_data):
     except Exception as e:
         print(f"Error inserting bulk data: {e}")
 
-# Function to run scraping using Playwright
 def run_scraping(cursor, connection):
     today = datetime.today()
     formatted_date = today.strftime("%-m/%d/%Y")
     print(f"Beginning scraping for {formatted_date}")
-
-    # Function to extract nutrient values using multiple strategies
-    def extract_nutrient_value(page, labels, is_serving_size=False):
+     
+    # Function to extract nutrient values. The labels are possible names for the item.
+    def extract_nutrient_value(soup, labels, is_serving_size=False):
         try:
-            if is_serving_size:
-                serving_label_element = page.query_selector('xpath=//*[contains(text(), "Serving size")]')
-                serving_size_elements = page.query_selector_all('.nutfactsservsize')
-
-                if len(serving_size_elements) > 1:
-                    return serving_size_elements[1].inner_text().strip()
-                elif serving_label_element:
-                    sibling_text = serving_label_element.evaluate('node => node.nextSibling ? node.nextSibling.textContent.trim() : null')
-                    if sibling_text:
-                        return sibling_text.strip()
-                return 'Not Found'
-
             for label in labels:
-                element = page.query_selector(f'xpath=//*[contains(translate(text(), "{label.upper()}", "{label.lower()}"), "{label.lower()}")]')
-                if element:
-                    sibling_text = element.evaluate('node => node.nextSibling ? node.nextSibling.textContent.trim() : null')
-                    if sibling_text:
-                        return sibling_text
-                    element_text = element.inner_text().strip()
-                    value = element_text.replace(label, '', 1).strip(':').strip()
-                    if value:
-                        return value
-                    parent_text = element.evaluate('node => node.parentElement ? node.parentElement.textContent : null')
-                    if parent_text:
+                label_regex = re.compile(re.escape(label), re.IGNORECASE)
+                
+                # Find the element containing the label
+                nutrient_element = soup.find(string=label_regex)
+                
+                if nutrient_element:
+                    # Special cases for calories and serving size because they are formatted differently from other macros
+                    if "calories" in label.lower():
+                        next_p_element = nutrient_element.find_next('p')
+                        if next_p_element:
+                            value = next_p_element.get_text(strip=True)
+                            if re.match(r'^[\d\.]+\s*\w*$', value):
+                                return value
+                    if is_serving_size:
+                        # The value is in the next sibling or in the next element with a specific class due to layout of site (may change)
+                        serving_size_element = nutrient_element.find_next_sibling(string=True)
+                        if serving_size_element and re.match(r'^[\d\.]+\s*\w*$', serving_size_element.strip()):
+                            return serving_size_element.strip()
+                        
+                        # Try to find within the parent element or a known class
+                        serving_size_parent = nutrient_element.parent
+                        if serving_size_parent:
+                            possible_value = serving_size_parent.find_next(class_="nutfactsservsize")
+                            if possible_value:
+                                return possible_value.get_text(strip=True)
+                        return NOT_FOUND
+
+                    # Handle other nutrient values. Find the next sibling after the label and clean the text to get the value. 
+                    # If not a match, then do the same for the parent element.
+                    next_sibling = nutrient_element.find_next(string=True)
+                    
+                    if next_sibling:
+                        value = next_sibling.strip()  # Ignore the label because we only want the numerical value
+                        if re.match(r'^[\d\.]+\s*\w*$', value):  # Check if the extracted value is a valid number or unit
+                            return value
+
+                    parent_element = nutrient_element.parent
+                    if parent_element:
+                        parent_text = parent_element.get_text(strip=True)
                         match = re.search(rf'{label}[\s\:]*([\d\.]+\s*\w*)', parent_text, re.IGNORECASE)
                         if match:
                             return match.group(1).strip()
-            return 'Not Found'
+
+            return NOT_FOUND
+        
         except Exception as e:
             print(f"Error extracting nutrient: {e}")
-            return 'Not Found'
+            return NOT_FOUND
 
-    # Run Playwright to scrape data and insert into MySQL
-    with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=HEADLESS)
-        page = browser.new_page()
+    
+    # Run BeautifulSoup to scrape data by looping over base URLs for each dining hall location.
+    for location, base_url in BASE_URLS.items():
+        dynamic_url = f"{base_url}{formatted_date}"
+        print(f"Scraping for location: {location}, URL: {dynamic_url}")
 
-        # Loop over base URLs for each dining hall location
-        for location, base_url in BASE_URLS.items():
-            dynamic_url = f"{base_url}{formatted_date}"
-            print(f"Scraping for location: {location}, URL: {dynamic_url}")
+        response = requests.get(dynamic_url)
+        if response.status_code != 200:
+            print(f"Failed to retrieve page for {location}. Status code: {response.status_code}")
+            continue
 
-            page.goto(dynamic_url)
-            page.goto(dynamic_url, wait_until='networkidle')
-            page.wait_for_selector('a.menu-item-name')
+        soup = BeautifulSoup(response.content, 'html.parser')
+        menu_items = soup.select('a.menu-item-name')
+        base_item_url = BASE_ITEM_URL
+        items_data = [] # Temporary list for each location's data
 
-            # Collect item names and hrefs before navigation
-            menu_items = page.query_selector_all('a.menu-item-name')
-            base_item_url = "https://nutrition.umd.edu/"
-            items_data = []
+        for item in menu_items:
+            item_name = item.get_text()
+            href = item['href']
+            item_url = f"{base_item_url}{href}"
+            items_data.append({'name': item_name, 'url': item_url, 'location': location})
 
-            for item in menu_items:
-                item_name = item.inner_text()
-                href = item.get_attribute('href')
-                item_url = f"{base_item_url}{href}"
-                items_data.append({'name': item_name, 'url': item_url, 'location': location})
+        print(len(menu_items))
 
-            # Process each item
-            for item_data in items_data:
-                item_name = item_data['name']
-                item_url = item_data['url']
-                location = item_data['location']  # Add location to item data
-                try:
-                    print(f"Launching page for item: {item_name}, Link: {item_url}")
+        for item_data in items_data:
+            item_name = item_data['name']
+            item_url = item_data['url']
+            location = item_data['location']
+            try:
+                print(f"Scraping details for item: {item_name}, Link: {item_url}")
 
-                    page.goto(item_url)
-                    page.wait_for_load_state('networkidle')
+                item_response = requests.get(item_url)
+                if item_response.status_code != 200:
+                    print(f"Failed to retrieve item page for {item_name}. Status code: {item_response.status_code}")
+                    continue
 
-                    for nutrient_key, labels in NUTRIENT_LABELS.items():
-                        if nutrient_key == 'serving_size':
-                            value = extract_nutrient_value(page, labels, is_serving_size=True)
-                        else:
-                            value = extract_nutrient_value(page, labels)
+                item_soup = BeautifulSoup(item_response.content, 'html.parser')
 
-                        item_data[nutrient_key] = value
-                        print(f"{nutrient_key}: {value}")
+                # Extract nutrients for each label
+                for nutrient_key, labels in NUTRIENT_LABELS.items():
+                    if nutrient_key == 'serving_size':
+                        value = extract_nutrient_value(item_soup, labels, is_serving_size=True)
+                    else:
+                        value = extract_nutrient_value(item_soup, labels)
 
-                    #Add delay to avoid overloading the server
-                    #time.sleep(random.uniform(1.5, 3.5))
+                    item_data[nutrient_key] = value if value else 'Not Found'
 
-                except Exception as e:
-                    print(f"Error processing item {item_name}: {e}")
+                # Simulate waiting time, can adjust if needed
+                time.sleep(random.uniform(0, 0))
 
-            # Perform bulk insert after processing all items for the location
+            except Exception as e:
+                print(f"Error processing item {item_name}: {e}")
+
+        #Insert items for location 
+        try:
             insert_bulk_food_data(cursor, connection, items_data)
+            print(f"Completed scraping and insertion for {location}")
+        except Exception as e:
+            print(f"Error inserting data for {location}: {e}")
 
-        browser.close()
+    print("All locations scraped and data inserted")
+
 
 # Function to query food data by name and optionally by location
 def query_food_data(cursor, food_name, location=None, limit=10):
@@ -255,3 +281,4 @@ def get_food_data():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+

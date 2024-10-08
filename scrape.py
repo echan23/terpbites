@@ -1,5 +1,5 @@
 from db_connection import connect_to_mysql
-from app import run_scraping, clear_table
+from app import run_scraping, clear_table, insert_bulk_food_data
 
 def scrape_and_update():
     try:

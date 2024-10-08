@@ -48,7 +48,7 @@ function App() {
   return (
     <div className="App">
       <header className="headers">
-        <h1>TerpEats</h1>
+        <h1>TerpBites</h1>
         <h2>{new Date().toLocaleDateString('en-US')}</h2>
       </header>
 
