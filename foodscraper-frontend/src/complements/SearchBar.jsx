@@ -21,7 +21,7 @@ export const SearchBar = ({ setResults }) => {
                 return;
             }
 
-            let url = `http://18.118.205.9:5000/api/food?food_name=${encodeURIComponent(inputValue)}`;
+            let url = `http://18.219.144.34:5000/api/food?food_name=${encodeURIComponent(inputValue)}`;
             //let url = `http://localhost:5000/api/food?food_name=${encodeURIComponent(inputValue)}`;
 
             if (locationValue) {
