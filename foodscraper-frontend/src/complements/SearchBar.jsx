@@ -17,12 +17,12 @@ export const SearchBar = ({ setResults }) => {
     const handleSearch = async (inputValue, locationValue) => {
         try {
             if (inputValue.trim() === '') {
-                setResults([]); 
+                setResults([]);
                 return;
             }
 
-            let url = `http://18.219.144.34:5000/api/food?food_name=${encodeURIComponent(inputValue)}`;
-            //let url = `http://localhost:5000/api/food?food_name=${encodeURIComponent(inputValue)}`;
+            //let url = `http://18.219.144.34:5000/api/food?food_name=${encodeURIComponent(inputValue)}`;
+            let url = `http://localhost:5000/api/food?food_name=${encodeURIComponent(inputValue)}`;
 
             if (locationValue) {
                 url += `&location=${encodeURIComponent(locationValue)}`;
@@ -34,10 +34,10 @@ export const SearchBar = ({ setResults }) => {
             }
 
             const data = await response.json();
-            setResults(data); 
+            setResults(data);
         } catch (error) {
-            console.error('Error fetching data:', error); 
-            setResults([]); 
+            console.error('Error fetching data:', error);
+            setResults([]);
         }
     };
 
@@ -54,7 +54,7 @@ export const SearchBar = ({ setResults }) => {
     // Handle input change and clear results immediately before debouncing the search
     const handleInputChange = (e) => {
         setInput(e.target.value);
-        setResults([]); 
+        setResults([]);
     };
 
     return (

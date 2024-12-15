@@ -14,7 +14,7 @@ function App() {
   const addItem = (item) => {
     setSelectedItems((prevItems) => {
       const existingItem = prevItems.find((i) => i.name === item.name);
-  
+
       if (existingItem) {
         return prevItems.map((i) =>
           i.name === item.name ? { ...i, servings: i.servings + 1 } : i
@@ -23,7 +23,7 @@ function App() {
         return [...prevItems, { ...item, servings: 1 }];
       }
     });
-  };  
+  };
 
   const removeItem = (item) => {
     setSelectedItems((prevItems) => prevItems.filter((i) => i.name !== item.name));
@@ -49,7 +49,6 @@ function App() {
     <div className="App">
       <header className="headers">
         <h1>TerpBites</h1>
-        <h2>{new Date().toLocaleDateString('en-US')}</h2>
       </header>
 
       <div className="search-bar-container">
@@ -67,7 +66,7 @@ function App() {
       />
 
       <footer>
-        {new Date().getFullYear()} Edward Chan echan23@github.com
+        {new Date().toLocaleDateString('en-US')}
       </footer>
 
       {isModalOpen && (
