@@ -1,4 +1,5 @@
 # foodscraper
+# foodscraper
 
 TERPBITES NUTRITION APP
 This is my deliverable for INST377 at UMD: a nutrition app that scrapes data from the UMD Dining Halls' nutritional website and displays it in an interactive interface. Users are able to view nutritional data for meals at the diner by searching for items, adding them, and incrementing serving sizes to match their meal. This application uses a Flask backend and a React frontend and uses an AWS RDS database for storage. The scraping logic is done in Python.
@@ -10,18 +11,18 @@ The main feature of the frontend is a dynamic search bar component that allows u
 The app is targeted for web browsers and doesn't support iOS or Android. I wasn't able to get it deployed on Vercel, so for now it can only be run on localhost.
 
 DEVELOPER MANUAL
-_____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+_______________________________________________________________________________________________________________________________________________________________________
 Prerequisites:
 Python 3.x
 Node.js & npm
 MySQL Server
-_____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+_______________________________________________________________________________________________________________________________________________________________________
 PLEASE READ!!!!!!!
 I was in the process of trying to deploy the application on the main branch but couldn't get it deployed. To demo the app itself on localhost, switch to the "demo_branch" branch using this command:
   git checkout demo_branch
 
 The details for the endpoint are in a .env file in the root directory of the project. To add new endpoints and connect them, update the .env file and update the corresponding value in db_connection.py
-_____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+_______________________________________________________________________________________________________________________________________________________________________
 
 LAUNCHING THE APP:
 Step 1: Clone Repository
@@ -43,7 +44,7 @@ Step 4: Launch Frontend
   npm run dev
 
 The app should launch, if data doesn't display on the front-end it is likely an issue with the database or the url in the SearchBar.jsx component. The URL is easy to find when you open the file; it is what determines the API endpoint that the frontend retrieves data from. Make sure that it is set to localhost if launching on localhost.
-_____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+_______________________________________________________________________________________________________________________________________________________________________
 ENDPOINTS:
 
 The frontend is connected to the backend through the SearchBar.jsx component which makes a GET request to my backend API. The url that connects the frontend will look something like:
@@ -57,7 +58,7 @@ Handling food data retrieval using a GET request to the /api/food endpoint.
 It supports querying food items by Name (required) and Location (optional).
 
 The connect_to_mysql() function (imported from db_connection.py) establishes a connection to the MySQL database.
-_____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+_______________________________________________________________________________________________________________________________________________________________________
 PROJECT STRUCTURE:
 FOODSCRAPER
 ├── foodscraper-frontend
@@ -101,4 +102,3 @@ FOODSCRAPER
 ├── scrape.py
 ├── test_query.py
 └── vite.config.js
-
