@@ -1,3 +1,5 @@
-#foodscraper
+Hi, this is my nutrition app, TerpBites!
 
-Hi, this is my nutrition app called TerpBites! It scrapes data from the University of Maryland's nutritional website, which contains nutrition facts on foods from the school diner. I used the BeautifulSoup Python library to scrape data for each item on the website, which I stored in an AWS RDS database. I then used a Flask-based app to build a RESTful API that connects to the database, enabling efficient data retrieval. The API serves nutritional data to the front end, which I built using React.js. The React application allows users to search for specific food items, view nutritional details, and even create customized meal plans by adding selected items to a personal meal tracker.
+TerpBites dynamically scrapes nutritional data from the University of Maryland's dining services website, providing up-to-date nutrition facts for foods served at the campus diner. I used the BeautifulSoup Python library to extract nutritional details for each food item and stored this data in an AWS RDS database for secure and scalable storage.
+
+To enable efficient data retrieval, I built a Flask-based RESTful API that connects to the database and serves nutritional data to the front end. The front-end application, developed with React.js, allows users to search for specific food items, view detailed nutritional information, and create personalized meal plans using a built-in meal tracker.
