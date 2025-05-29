@@ -62,12 +62,14 @@ function App() {
         </button>
       </div>
 
-      <SearchResultsList results={results} addItem={addItem} />
-      <SelectedItemsList
-        selectedItems={selectedItems}
-        removeItem={removeItem}
-        updateServings={updateServings}
-      />
+      <div className="search-result-selected-items-container">
+        <SearchResultsList results={results} addItem={addItem} />
+        <SelectedItemsList
+          selectedItems={selectedItems}
+          removeItem={removeItem}
+          updateServings={updateServings}
+        />
+      </div>
 
       <footer>{new Date().toLocaleDateString("en-US")}</footer>
 

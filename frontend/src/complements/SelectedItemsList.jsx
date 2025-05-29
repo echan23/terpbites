@@ -109,15 +109,6 @@ export const SelectedItemsList = ({
           ) : (
             <div className="no-items">
               <span>No items selected</span>
-              <br />
-              <br />
-              <br />
-              <span>
-                P.S. TerpBites doesn't work during the summer because there is
-                nothing on the UMD dining hall website, so there is nothing to
-                scrape. However, you can search "Apple Pie", "Grilled Cheese",
-                or "Veggie Wrap" to see how the app works :D
-              </span>
             </div>
           )}
         </div>
