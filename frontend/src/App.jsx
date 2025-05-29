@@ -5,16 +5,17 @@ import { SearchBar } from "./complements/SearchBar";
 import { SearchResultsList } from "./complements/SearchResultsList";
 import { SelectedItemsList } from "./complements/SelectedItemsList";
 import { NutritionModal } from "./complements/NutritionModal";
+import AboutModal from "./complements/AboutModal";
 
 function App() {
   const [results, setResults] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showAboutModal, setShowAboutModal] = useState(false);
 
   const addItem = (item) => {
     setSelectedItems((prevItems) => {
       const existingItem = prevItems.find((i) => i.name === item.name);
-
       if (existingItem) {
         return prevItems.map((i) =>
           i.name === item.name ? { ...i, servings: i.servings + 1 } : i
@@ -41,42 +42,51 @@ function App() {
     );
   };
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+  const openAboutModal = () => setShowAboutModal(true);
+  const closeAboutModal = () => setShowAboutModal(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   return (
-    <div className="App">
-      <header className="headers">
-        <h1>TerpBites</h1>
-      </header>
+    <>
+      {/*showAboutModal && <AboutModal closeModal={closeAboutModal} />*/}
+      <div className="App">
+        <header className="flex justify-between items-center p-4 shadow-md">
+          <h1 className="text-2xl font-bold text-umd-red">TerpBites</h1>
+          {/*<button
+            className="bg-umd-red text-white px-4 py-2 rounded hover:bg-red-700"
+            onClick={openAboutModal}
+          >
+            About
+          </button>*/}
+        </header>
 
-      <div className="search-bar-container">
-        <SearchBar setResults={setResults} />
-        <button className="open-modal-button" onClick={openModal}>
-          View Total Nutrition
-        </button>
+        <div className="search-bar-container">
+          <SearchBar setResults={setResults} />
+          <button className="open-modal-button" onClick={openModal}>
+            View Total Nutrition
+          </button>
+        </div>
+
+        <div className="search-result-selected-items-container">
+          <SearchResultsList results={results} addItem={addItem} />
+          <SelectedItemsList
+            selectedItems={selectedItems}
+            removeItem={removeItem}
+            updateServings={updateServings}
+          />
+        </div>
+
+        <footer>{new Date().toLocaleDateString("en-US")}</footer>
+
+        {isModalOpen && (
+          <NutritionModal
+            selectedItems={selectedItems}
+            closeModal={closeModal}
+          />
+        )}
       </div>
-
-      <div className="search-result-selected-items-container">
-        <SearchResultsList results={results} addItem={addItem} />
-        <SelectedItemsList
-          selectedItems={selectedItems}
-          removeItem={removeItem}
-          updateServings={updateServings}
-        />
-      </div>
-
-      <footer>{new Date().toLocaleDateString("en-US")}</footer>
-
-      {isModalOpen && (
-        <NutritionModal selectedItems={selectedItems} closeModal={closeModal} />
-      )}
-    </div>
+    </>
   );
 }
 

@@ -6,7 +6,10 @@
     "vite": "^5.4.8"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.4",
     "serverless-dotenv-plugin": "^6.0.0",
-    "serverless-python-requirements": "^6.1.2"
+    "serverless-python-requirements": "^6.1.2",
+    "tailwindcss": "^4.1.8"
   }
 }
