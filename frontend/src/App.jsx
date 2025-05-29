@@ -49,16 +49,13 @@ function App() {
 
   return (
     <>
-      {/*showAboutModal && <AboutModal closeModal={closeAboutModal} />*/}
+      {showAboutModal && <AboutModal closeModal={closeAboutModal} />}
       <div className="App">
-        <header className="flex justify-between items-center p-4 shadow-md">
-          <h1 className="text-2xl font-bold text-umd-red">TerpBites</h1>
-          {/*<button
-            className="bg-umd-red text-white px-4 py-2 rounded hover:bg-red-700"
-            onClick={openAboutModal}
-          >
+        <header className="header">
+          <h1 className="header-title">TerpBites</h1>
+          <button className="header-button" onClick={openAboutModal}>
             About
-          </button>*/}
+          </button>
         </header>
 
         <div className="search-bar-container">

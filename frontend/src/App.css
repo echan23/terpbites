@@ -21,8 +21,34 @@
   justify-content: space-evenly;
 }
 
-.headers {
+.header {
+  position: relative;
+  height: 64px;
   display: flex;
-  flex-direction: row;
-  justify-content: center;
+  align-items: center;
+  padding: 0 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffffff; /* umd-red */
+}
+
+.header-button {
+  margin-left: auto;
+  background-color: #9e1b32;
+  color: rgb(255, 255, 255);
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.header-button:hover {
+  background-color: #7e1628;
 }
