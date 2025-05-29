@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import './index.css';
-import './App.css';
-import { SearchBar } from './complements/SearchBar';
-import { SearchResultsList } from './complements/SearchResultsList';
-import { SelectedItemsList } from './complements/SelectedItemsList';
-import { NutritionModal } from './complements/NutritionModal';
+import React, { useState } from "react";
+import "./index.css";
+import "./App.css";
+import { SearchBar } from "./complements/SearchBar";
+import { SearchResultsList } from "./complements/SearchResultsList";
+import { SelectedItemsList } from "./complements/SelectedItemsList";
+import { NutritionModal } from "./complements/NutritionModal";
 
 function App() {
   const [results, setResults] = useState([]);
@@ -26,13 +26,17 @@ function App() {
   };
 
   const removeItem = (item) => {
-    setSelectedItems((prevItems) => prevItems.filter((i) => i.name !== item.name));
+    setSelectedItems((prevItems) =>
+      prevItems.filter((i) => i.name !== item.name)
+    );
   };
 
   const updateServings = (itemName, newServings) => {
     setSelectedItems((prevItems) =>
       prevItems.map((item) =>
-        item.name === itemName ? { ...item, servings: Number(newServings) } : item
+        item.name === itemName
+          ? { ...item, servings: Number(newServings) }
+          : item
       )
     );
   };
@@ -62,12 +66,10 @@ function App() {
       <SelectedItemsList
         selectedItems={selectedItems}
         removeItem={removeItem}
-        updateServings={updateServings} // Pass the updateServings function as a prop
+        updateServings={updateServings}
       />
 
-      <footer>
-        {new Date().toLocaleDateString('en-US')}
-      </footer>
+      <footer>{new Date().toLocaleDateString("en-US")}</footer>
 
       {isModalOpen && (
         <NutritionModal selectedItems={selectedItems} closeModal={closeModal} />

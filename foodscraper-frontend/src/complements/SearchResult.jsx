@@ -1,5 +1,5 @@
-import React from 'react';
-import './SearchResult.css';
+import React from "react";
+import "./SearchResult.css";
 
 export const SearchResult = ({ result, onClick, isRemovable, onRemove }) => {
   return (
@@ -10,7 +10,7 @@ export const SearchResult = ({ result, onClick, isRemovable, onRemove }) => {
           <button
             className="remove-button"
             onClick={(e) => {
-              e.stopPropagation(); // Prevents triggering the onClick for the search result
+              e.stopPropagation();
               onRemove();
             }}
           >
