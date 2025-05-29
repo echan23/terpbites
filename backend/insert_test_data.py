@@ -24,6 +24,15 @@ try:
     query = """
     INSERT INTO food_items (name, calories, protein, total_fat, carbs, sodium, sugar, serving_size, location)
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        calories = VALUES(calories),
+        protein = VALUES(protein),
+        total_fat = VALUES(total_fat),
+        carbs = VALUES(carbs),
+        sodium = VALUES(sodium),
+        sugar = VALUES(sugar),
+        serving_size = VALUES(serving_size),
+        location = VALUES(location);
     """
 
     cursor.executemany(query, test_data)
