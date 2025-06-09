@@ -32,7 +32,8 @@ const SelectedItemsList: React.FC<SelectedItemsListProps> = ({
     <ScrollArea className="max-h-[60vh] w-full overflow-auto flex flex-col min-h-0">
       {items.length === 0 ? (
         <div className="p-4 text-center text-muted-foreground">
-          No data during the summer - read the about section!
+          During the summer, there isn't anything to scrape, so we put some
+          spoof data to show how the app works. Try searching for apples!
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-2 p-2 flex-shrink-0">

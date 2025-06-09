@@ -6,12 +6,21 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
+//In the db the locations are stored differently from the labels on the dropdown
+const locationMap: { [label: string]: string } = {
+  "251 North": "North",
+  "South Campus": "South",
+  Yahentamitsi: "Y",
+};
+
 const LocationSelector = ({
   setLocation,
 }: {
   setLocation: (value: string) => void;
 }) => (
-  <Select onValueChange={setLocation}>
+  <Select
+    onValueChange={(selectedLabel) => setLocation(locationMap[selectedLabel])}
+  >
     <SelectTrigger
       className="
         relative py-6.5 w-65 rounded-xl
