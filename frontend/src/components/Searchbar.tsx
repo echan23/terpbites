@@ -1,9 +1,7 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import ToggleDrawerButton from "./ToggleDrawerButton";
 import type NutritionItem from "./data/NutritionItem";
-import LocationSelector from "./LocationSelector";
 
 interface SearchbarProps {
   selectedItems: NutritionItem[];
@@ -15,12 +13,7 @@ interface SearchbarProps {
 const API_BASE =
   "https://bsitu5ocgb.execute-api.us-east-1.amazonaws.com/dev/api/food";
 
-const Searchbar = ({
-  selectedItems,
-  setSelectedItems,
-  toggleDrawer,
-  location,
-}: SearchbarProps) => {
+const Searchbar = ({ setSelectedItems, location }: SearchbarProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<NutritionItem[]>([]);
 
