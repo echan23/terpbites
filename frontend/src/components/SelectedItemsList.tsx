@@ -30,22 +30,28 @@ const SelectedItemsList: React.FC<SelectedItemsListProps> = ({
 
   return (
     <ScrollArea className="max-h-[60vh] w-full overflow-auto flex flex-col min-h-0">
-      <div className="grid grid-cols-1 gap-2 p-2 flex-shrink-0">
-        {items.map((item, idx) => (
-          <SelectedItem
-            key={item.name}
-            item={item}
-            isExpanded={expandedIndex === idx}
-            onToggle={() =>
-              setExpandedIndex(expandedIndex === idx ? null : idx)
-            }
-            onRemove={() => handleRemove(item.name)}
-            onChangeServings={(newServings) =>
-              handleChangeServings(item.name, newServings)
-            }
-          />
-        ))}
-      </div>
+      {items.length === 0 ? (
+        <div className="p-4 text-center text-muted-foreground">
+          No data during the summer - read the about section!
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-2 p-2 flex-shrink-0">
+          {items.map((item, idx) => (
+            <SelectedItem
+              key={item.name}
+              item={item}
+              isExpanded={expandedIndex === idx}
+              onToggle={() =>
+                setExpandedIndex(expandedIndex === idx ? null : idx)
+              }
+              onRemove={() => handleRemove(item.name)}
+              onChangeServings={(newServings) =>
+                handleChangeServings(item.name, newServings)
+              }
+            />
+          ))}
+        </div>
+      )}
       <ScrollBar orientation="vertical" />
     </ScrollArea>
   );

@@ -33,9 +33,10 @@ const AboutModal: React.FC<{
               Welcome to TerpBites! 🐢 Users can search for food items, view
               nutrition facts, and track meals. During the summer, there&apos;s
               nothing to scrape, so we put some spoof data to show how the app
-              works—apples! P.S. Normally, the data is assigned to a location,
-              but since we put spoof data in, we didn't assign a location.
-              That's why if you filter by location, you won't see anything.
+              works—try searching for apples! P.S. Normally, the data is
+              assigned to a location, but since we put spoof data in, we didn't
+              assign a location. That's why if you filter by location, you won't
+              see anything.
             </p>
           </div>
 
