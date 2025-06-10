@@ -29,14 +29,14 @@ const Header: React.FC = () => {
 
   return (
     <motion.header
-      className="relative flex items-center justify-center bg-white py-4 border-b-4 border-red-700 shadow-md"
+      className="relative flex items-center justify-center bg-white py-2 md:py-4 border-b-4 border-red-700 shadow-md"
       variants={headerVariants}
       initial="hidden"
       animate="visible"
     >
       <motion.h1
         style={{ fontFamily: "Academy, sans-serif" }}
-        className="text-5xl font-extrabold tracking-wider flex space-x-1 text-red-700"
+        className="text-3xl md:text-5xl font-extrabold tracking-wider flex space-x-1 text-red-700"
       >
         {title.map((char, index) => (
           <motion.span
@@ -57,10 +57,10 @@ const Header: React.FC = () => {
       </motion.h1>
 
       {/* About button with animation */}
-      <motion.div className="absolute right-4" variants={letterVariants}>
+      <motion.div className="absolute right-2 md:right-4" variants={letterVariants}>
         <MotionButton
           variant="outline"
-          className="px-6 py-2 rounded-full border-2 border-yellow-500 text-yellow-600 hover:bg-yellow-500 hover:text-black transition-colors duration-200 font-semibold shadow-sm"
+          className="px-3 md:px-6 py-1 md:py-2 text-sm md:text-base rounded-full border-2 border-yellow-500 text-yellow-600 hover:bg-yellow-500 hover:text-black transition-colors duration-200 font-semibold shadow-sm"
           onClick={() => setIsModalOpen(true)}
         >
           About

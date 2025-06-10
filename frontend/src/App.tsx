@@ -21,17 +21,23 @@ function App() {
     <div className="flex flex-col min-h-screen">
       <Header />
 
-      <main className="flex-1 flex flex-row justify-center w-full h-full p-5">
-        <div className="search-components-container w-[70%] flex flex-col gap-4">
-          <div className="searchbar-row-container flex flex-row justify-between items-center gap-4">
-            <LocationSelector setLocation={setLocation} />
+      <main className="flex-1 flex flex-col md:flex-row justify-center w-full h-full p-2 md:p-5">
+        <div className="search-components-container w-full md:w-[70%] flex flex-col gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 w-full justify-between items-center">
+            <div className="w-full sm:w-2/3">
+              <LocationSelector setLocation={setLocation} />
+            </div>
+            <div className="w-full sm:w-1/3">
+              <ToggleDrawerButton onClick={toggleDrawer} />
+            </div>
+          </div>
+          <div className="searchbar-row-container flex flex-col md:flex-row justify-between items-center gap-4">
             <Searchbar
               selectedItems={selectedItems}
               setSelectedItems={setSelectedItems}
               toggleDrawer={toggleDrawer}
               location={location}
             />
-            <ToggleDrawerButton onClick={toggleDrawer} />
           </div>
           <SelectedItemsList
             items={selectedItems}
