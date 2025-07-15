@@ -11,7 +11,7 @@ try:
         password=os.environ["DB_PASSWORD"],
         database=os.environ["DB_NAME"],
     )
-    print("✅ Connected to the database")
+    print("Connected to the database")
 
     cursor = conn.cursor()
 

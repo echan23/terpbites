@@ -3,12 +3,10 @@ from backend.app import run_scraping, clear_table, insert_bulk_food_data
 
 def scrape_and_update():
     try:
-        # Use the context manager to automatically handle the connection closing
         with connect_to_mysql() as connection:
             if connection:
                 cursor = connection.cursor()
 
-                # Clear the table and run scraping
                 clear_table(cursor, connection)
                 run_scraping(cursor, connection)
 

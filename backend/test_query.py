@@ -2,12 +2,10 @@ from backend.db_connection import connect_to_mysql
 from backend.app import query_food_data
 
 def test_query():
-    # Connect to the AWS RDS instance
     connection = connect_to_mysql()
     if connection:
         cursor = connection.cursor()
 
-        # Test the query_food_data function with sample inputs
         food_name = "apple"
         location = "South"
 
@@ -18,7 +16,6 @@ def test_query():
         else:
             print("No data found.")
 
-        # Close the connection
         cursor.close()
         connection.close()
 

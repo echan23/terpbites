@@ -12,14 +12,12 @@ from backend.db_connection import connect_to_mysql
 app = Flask(__name__)
 CORS(app)
 
-# Base URLs and corresponding location names
 BASE_URLS = {
     "South": BASE_URL_SOUTH,
     "North": BASE_URL_NORTH,
     "Y": BASE_URL_Y
 } 
 
-# Nutrient labels mapping
 NUTRIENT_LABELS = {
     'calories': ['Calories per serving', 'Calories'],
     'serving_size': ['Serving Size', 'Serving size'],
@@ -30,7 +28,6 @@ NUTRIENT_LABELS = {
     'sugar': ['Total Sugars', 'Sugars', 'Sugar']
 }
 
-# Insert bulk food data
 def insert_bulk_food_data(cursor, connection, items_data):
     try:
         query = '''
@@ -71,13 +68,11 @@ def run_scraping(cursor, connection):
     formatted_date = today.strftime("%-m/%d/%Y")
     print(f"Beginning scraping for {formatted_date}")
      
-    # Function to extract nutrient values. The labels are possible names for the item.
     def extract_nutrient_value(soup, labels, is_serving_size=False):
         try:
             for label in labels:
                 label_regex = re.compile(re.escape(label), re.IGNORECASE)
                 
-                # Find the element containing the label
                 nutrient_element = soup.find(string=label_regex)
                 
                 if nutrient_element:
@@ -107,8 +102,8 @@ def run_scraping(cursor, connection):
                     next_sibling = nutrient_element.find_next(string=True)
                     
                     if next_sibling:
-                        value = next_sibling.strip()  # Ignore the label because we only want the numerical value
-                        if re.match(r'^[\d\.]+\s*\w*$', value):  # Check if the extracted value is a valid number or unit
+                        value = next_sibling.strip()  #ignore the label because we only want the numerical value
+                        if re.match(r'^[\d\.]+\s*\w*$', value):  #check if the extracted value is a valid number or unit
                             return value
 
                     parent_element = nutrient_element.parent
@@ -125,7 +120,6 @@ def run_scraping(cursor, connection):
             return NOT_FOUND
 
     
-    # Run BeautifulSoup to scrape data by looping over base URLs for each dining hall location.
     for location, base_url in BASE_URLS.items():
         dynamic_url = f"{base_url}{formatted_date}"
         print(f"Scraping for location: {location}, URL: {dynamic_url}")
@@ -138,7 +132,7 @@ def run_scraping(cursor, connection):
         soup = BeautifulSoup(response.content, 'html.parser')
         menu_items = soup.select('a.menu-item-name')
         base_item_url = BASE_ITEM_URL
-        items_data = [] # Temporary list for each location's data
+        items_data = [] 
 
         for item in menu_items:
             item_name = item.get_text()
@@ -171,13 +165,12 @@ def run_scraping(cursor, connection):
 
                     item_data[nutrient_key] = value if value else 'Not Found'
 
-                # Simulate waiting time, can adjust if needed
+
                 time.sleep(random.uniform(0, 0))
 
             except Exception as e:
                 print(f"Error processing item {item_name}: {e}")
 
-        #Insert items for location 
         try:
             insert_bulk_food_data(cursor, connection, items_data)
             print(f"Completed scraping and insertion for {location}")
@@ -187,10 +180,8 @@ def run_scraping(cursor, connection):
     print("All locations scraped and data inserted")
 
 
-# Function to query food data by name and optionally by location
 def query_food_data(cursor, food_name, location=None, limit=10):
     try:
-        # Prepare the SQL query based on whether location is provided
         if location:
             query = """
                 SELECT * FROM food_items 
@@ -240,10 +231,8 @@ def query_food_data(cursor, food_name, location=None, limit=10):
         print(f"Error retrieving data: {e}")
         return None
 
-#Clears table before rescraping occurs
 def clear_table(cursor, connection):
     try:
-        # Truncate the table to remove all rows
         query = "TRUNCATE TABLE food_items;"
         cursor.execute(query)
         connection.commit()
@@ -263,12 +252,10 @@ def get_food_data():
         if not food_name:
             return jsonify({"error": "food_name parameter is required"}), 400
 
-        # Use the context manager to automatically handle the connection closing
         with connect_to_mysql() as connection:
             if connection:
                 cursor = connection.cursor()
 
-                # Query for food data
                 results = query_food_data(cursor, food_name, location if location else None, limit)
                 if results:
                     return jsonify(results), 200
