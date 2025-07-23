@@ -264,6 +264,7 @@ html,
 body {
   overflow: hidden; /* Prevent scrolling off the page */
   user-select: none; /* Disable text/image highlighting */
+  overscroll-behavior-y: contain;
 }
 
 @layer utilities {
