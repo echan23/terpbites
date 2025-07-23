@@ -10,8 +10,7 @@ interface SearchbarProps {
   location: string;
 }
 
-const API_BASE =
-  "https://bsitu5ocgb.execute-api.us-east-1.amazonaws.com/dev/api/food";
+const API_BASE = import.meta.env.VITE_SEARCH_API_URL;
 
 const Searchbar = ({ setSelectedItems, location }: SearchbarProps) => {
   const [searchTerm, setSearchTerm] = useState("");
