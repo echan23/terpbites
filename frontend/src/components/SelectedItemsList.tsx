@@ -35,8 +35,8 @@ const SwipeableItem: React.FC<SwipeableItemProps> = ({
   const currentX = useRef(0);
   const itemRef = useRef<HTMLDivElement>(null);
 
-  const SWIPE_THRESHOLD = 120; // Minimum distance to trigger delete
-  const DELETE_ZONE = 80; // Distance where delete button appears
+  const SWIPE_THRESHOLD = 140; // Minimum distance to trigger delete
+  const DELETE_ZONE = 100; // Distance where delete button appears
 
   const handleTouchStart = (e: React.TouchEvent) => {
     startX.current = e.touches[0].clientX;

@@ -29,7 +29,6 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
         isExpanded ? "p-4 bg-white shadow" : "p-2 bg-gray-100"
       )}
     >
-      {/* Header row */}
       <div
         className="flex items-center justify-between cursor-pointer"
         onClick={onToggle}
@@ -47,7 +46,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
           </div>
         </div>
 
-        {/* Hover to reveal remove button */}
+        {/*Remove button*/}
         <button
           className="opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto p-1 text-gray-500 hover:text-red-600 transition-opacity"
           onClick={(e) => {
@@ -63,19 +62,16 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
       {isExpanded && (
         <div className="nutrition-facts-panel mt-4 text-gray-800">
           <div className="border-2 border-black p-4 text-xs font-sans leading-tight">
-            {/* Nutrition Facts header */}
             <div className="border-b-4 border-black pb-1 text-lg font-bold">
               Nutrition Facts
             </div>
 
-            {/* Serving Size */}
             <div className="mt-2 flex justify-between items-center">
               <span className="font-semibold">Serving Size</span>
               <span>{item.serving_size ?? "N/A"}</span>
             </div>
             <div className="border-t border-black my-1" />
 
-            {/* Servings control */}
             <div className="flex justify-between items-center mb-2">
               <span className="font-semibold">Servings</span>
               <div className="flex items-center gap-1">
@@ -112,14 +108,12 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
               </div>
             </div>
 
-            {/* Calories */}
             <div className="flex justify-between text-lg font-bold mb-1">
               <span>Calories</span>
               <span>{item.calories ?? "N/A"}</span>
             </div>
             <div className="border-t border-dashed border-gray-500 mb-2" />
 
-            {/* Other macros */}
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">
                 <span>Protein</span>
