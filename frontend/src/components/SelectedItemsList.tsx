@@ -15,7 +15,6 @@ interface SelectedItemsListProps {
 
 interface SwipeableItemProps {
   item: NutritionItem;
-  index: number;
   isExpanded: boolean;
   onToggle: () => void;
   onRemove: () => void;
@@ -24,7 +23,6 @@ interface SwipeableItemProps {
 
 const SwipeableItem: React.FC<SwipeableItemProps> = ({
   item,
-  index,
   isExpanded,
   onToggle,
   onRemove,
@@ -52,7 +50,7 @@ const SwipeableItem: React.FC<SwipeableItemProps> = ({
     currentX.current = e.touches[0].clientX;
     const deltaX = startX.current - currentX.current;
 
-    // Only allow left swipe (positive deltaX)
+    //Only allow left swipe
     if (deltaX > 0) {
       const clampedOffset = Math.min(deltaX, SWIPE_THRESHOLD + 20);
       setSwipeOffset(clampedOffset);
@@ -114,7 +112,6 @@ const SwipeableItem: React.FC<SwipeableItemProps> = ({
 
   return (
     <div className="relative overflow-hidden">
-      {/* Delete button background */}
       <div
         className={`absolute right-0 top-0 h-full flex items-center justify-center bg-red-500 text-white transition-all duration-200 ${
           showDeleteButton ? "w-20" : "w-0"
@@ -135,7 +132,6 @@ const SwipeableItem: React.FC<SwipeableItemProps> = ({
         </svg>
       </div>
 
-      {/* Main item */}
       <div
         ref={itemRef}
         className={`relative bg-background transition-transform ${
@@ -194,7 +190,6 @@ const SelectedItemsList: React.FC<SelectedItemsListProps> = ({
             <SwipeableItem
               key={item.name}
               item={item}
-              index={idx}
               isExpanded={expandedIndex === idx}
               onToggle={() =>
                 setExpandedIndex(expandedIndex === idx ? null : idx)
