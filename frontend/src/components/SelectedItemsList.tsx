@@ -183,6 +183,11 @@ const SelectedItemsList: React.FC<SelectedItemsListProps> = ({
         <div className="p-4 text-center text-muted-foreground">
           During the summer, there isn't anything to scrape, so we put some
           spoof data to show how the app works. Try searching for apples!
+          <br />
+          <br />
+          <p className="block sm:hidden">
+            Swipe left on an item to remove it from your list.
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-2 p-2 flex-shrink-0">

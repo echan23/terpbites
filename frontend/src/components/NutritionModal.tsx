@@ -62,9 +62,6 @@ export const NutritionModal: React.FC<NutritionModalProps> = ({
           <DrawerTitle className="text-2xl sm:text-3xl font-bold text-black font-serif tracking-wide text-center sm:text-left">
             Total Nutrition
           </DrawerTitle>
-          <DrawerDescription className="text-gray-600 mt-1 font-medium text-center sm:text-left text-sm sm:text-base">
-            Here's your meal summary—Go Terps!
-          </DrawerDescription>
         </DrawerHeader>
 
         {/* Main Content */}
