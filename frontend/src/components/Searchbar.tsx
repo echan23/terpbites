@@ -69,7 +69,7 @@ const Searchbar = ({ setSelectedItems, location }: SearchbarProps) => {
   };
 
   return (
-    <div className="relative w-full mb-5 mr-4 ml-4 mt-5">
+    <div className="relative flex-1 min-w-0 sm:min-w-64">
       <div className="flex w-full items-center gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -78,12 +78,11 @@ const Searchbar = ({ setSelectedItems, location }: SearchbarProps) => {
             placeholder="Search for a food item…"
             value={searchTerm}
             onChange={handleSearch}
-            className="w-full h-14 rounded-xl border border-gray-300 px-4 py-3 pl-12 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/30 transition-colors duration-200 text-base transform transition-transform duration-200 ease-in-out hover:scale-102 hover:shadow-md"
+            className="w-full h-14 placeholder:text-sm sm:placeholder:text-base rounded-xl border border-gray-300 px-4 py-3 pl-12 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/30 transition-colors duration-200 text-base transform transition-transform duration-200 ease-in-out hover:scale-102 hover:shadow-md"
           />
         </div>
       </div>
 
-      {/* Search results dropdown with bounce animation */}
       <div
         className={`
     absolute left-0 right-0 z-10 mt-2 rounded-md border border-gray-300 bg-white shadow-md

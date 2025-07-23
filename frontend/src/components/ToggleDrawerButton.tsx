@@ -9,7 +9,7 @@ const ToggleDrawerButton: React.FC<ToggleDrawerButtonProps> = ({ onClick }) => (
   <Button
     onClick={onClick}
     className="
-      relative w-40 h-14 px-6 rounded-xl
+      relative w-full sm:w-32 max-w-50 px-6 rounded-xl sm:py-5 md:py-7 
       border border-[#E21833] bg-white text-[#E21833] font-medium
       overflow-hidden
       before:content-[''] before:absolute before:top-0 before:left-0 before:w-full before:h-1

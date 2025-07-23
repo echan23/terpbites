@@ -43,7 +43,6 @@ const Header: React.FC = () => {
             key={index}
             variants={letterVariants}
             className={`inline-block ${
-              // Rotate color pattern for red, gold, black
               index % 3 === 0
                 ? "text-red-700"
                 : index % 3 === 1
@@ -56,8 +55,10 @@ const Header: React.FC = () => {
         ))}
       </motion.h1>
 
-      {/* About button with animation */}
-      <motion.div className="absolute right-2 md:right-4" variants={letterVariants}>
+      <motion.div
+        className="absolute right-2 md:right-4 hidden sm:block"
+        variants={letterVariants}
+      >
         <MotionButton
           variant="outline"
           className="px-3 md:px-6 py-1 md:py-2 text-sm md:text-base rounded-full border-2 border-yellow-500 text-yellow-600 hover:bg-yellow-500 hover:text-black transition-colors duration-200 font-semibold shadow-sm"
@@ -67,7 +68,6 @@ const Header: React.FC = () => {
         </MotionButton>
       </motion.div>
 
-      {/* About Modal */}
       <AboutModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </motion.header>
   );
