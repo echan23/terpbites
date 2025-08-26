@@ -1,0 +1,46 @@
+service: terpbites-api
+useDotenv: true #
+
+custom:
+  pythonRequirements:
+    dockerizePip: false
+    layer: false
+
+plugins:
+  - serverless-python-requirements
+
+provider:
+  name: aws
+  runtime: python3.12
+  region: us-east-1
+  environment:
+    DB_HOST: ${env:RDS_ENDPOINT}
+    DB_USER: ${env:DB_USER_RDS}
+    DB_PASS: ${env:DB_PASSWORD}
+    DB_NAME: ${env:DB_NAME}
+    BASE_URL_SOUTH: ${env:BASE_URL_SOUTH}
+    BASE_URL_NORTH: ${env:BASE_URL_NORTH}
+    BASE_URL_Y: ${env:BASE_URL_Y}
+    BASE_ITEM_URL: ${env:BASE_ITEM_URL}
+  vpc:
+    securityGroupIds:
+      - sg-0186dc4ba7f538452
+    subnetIds:
+      - subnet-0653c9ffc85d39214
+      - subnet-0f1795fd37eb3dac0
+
+functions:
+  getFoodData:
+    handler: get_food_data/lambda_function.lambda_handler
+    timeout: 20
+    events:
+      - http:
+          path: api/food
+          method: get
+          cors: true
+
+  runScraping:
+    handler: run_scraping/lambda_function.lambda_handler
+    events:
+      - schedule:
+          rate: cron(0 10 * * ? *) #Triggers everyday at 5AM EST, 6AM during Daylight Savings

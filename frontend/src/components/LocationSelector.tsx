@@ -23,7 +23,7 @@ const LocationSelector = ({
   >
     <SelectTrigger
       className="
-    relative sm:py-5 md:py-7 px-4 max-w-full sm:w-32 max-w-50 text-sm
+    relative sm:py-5 md:py-7 px-4 text-sm
     rounded-xl border border-[#E21833] bg-white text-[#E21833] font-medium
     overflow-hidden
     before:content-[''] before:absolute before:top-0 before:left-0 before:w-full before:h-1
@@ -41,20 +41,12 @@ const LocationSelector = ({
       />
     </SelectTrigger>
 
-    <SelectContent
-      className="
-        mt-2 rounded-xl border border-[#E21833]/50 bg-white
-        shadow-md overflow-hidden
-      "
-    >
+    <SelectContent className="mt-2 rounded-xl border border-[#E21833]/50 bg-white shadow-md overflow-hidden">
       {["251 North", "South Campus", "Yahentamitsi"].map((loc) => (
         <SelectItem
           key={loc}
           value={loc}
-          className="
-            h-14 px-4 flex items-center
-            hover:bg-[#E21833] hover:text-white transition-colors
-          "
+          className="h-14 px-4 flex items-center hover:bg-[#E21833] hover:text-white transition-colors"
         >
           {loc}
         </SelectItem>

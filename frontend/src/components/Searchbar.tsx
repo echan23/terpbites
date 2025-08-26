@@ -83,9 +83,7 @@ const Searchbar = ({ setSelectedItems, location }: SearchbarProps) => {
       </div>
 
       <div
-        className={`
-    absolute left-0 right-0 z-10 mt-2 rounded-md border border-gray-300 bg-white shadow-md
-    overflow-hidden transition-all duration-50 ease-in-out
+        className={`absolute left-0 right-0 z-10 mt-2 rounded-md border border-gray-300 bg-white shadow-md overflow-hidden transition-all duration-50 ease-in-out
     ${
       searchTerm && results.length > 0
         ? "max-h-60 opacity-100"

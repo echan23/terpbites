@@ -29,9 +29,9 @@ const AboutModal: React.FC<{
           <div className="bg-yellow-50 rounded-lg p-4 border-l-4 border-yellow-400 shadow-inner">
             <p>
               Welcome to TerpBites! Users can search for food items, view
-              nutrition facts, and track meals. During the summer, there&apos;s
-              nothing to scrape, so we put some spoof data to show how the app
-              works. Try searching for apples!
+              nutrition facts, and track meals. If no data shows up for a
+              particular food item, it is because UMD Dining Services has not
+              provided any data for it.
             </p>
           </div>
         </div>
