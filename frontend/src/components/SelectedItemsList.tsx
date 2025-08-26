@@ -181,9 +181,8 @@ const SelectedItemsList: React.FC<SelectedItemsListProps> = ({
     <ScrollArea className="max-h-[60vh] w-full overflow-auto flex flex-col min-h-0">
       {items.length === 0 ? (
         <div className="p-4 text-center text-muted-foreground">
-          Remember to select your diner! If no location is selected, duplicate
-          items will be shown for items that are available at multiple
-          locations.
+          Remember to select the location to the diner you are at, otherwise
+          your item might not show up!
           <br />
           <br />
           <p className="block sm:hidden">

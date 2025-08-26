@@ -67,7 +67,7 @@ def lambda_handler(event, context):
 
         query = """
             SELECT * FROM food_items 
-            WHERE LOWER(TRIM(name)) LIKE LOWER(%s)
+            WHERE LOWER(name) LIKE LOWER(%s)
         """
         values = [f"%{food_name}%"]
 

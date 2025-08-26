@@ -14,9 +14,9 @@ provider:
   runtime: python3.12
   region: us-east-1
   environment:
-    DB_HOST: ${env:RDS_ENDPOINT}
-    DB_USER: ${env:DB_USER_RDS}
-    DB_PASS: ${env:DB_PASSWORD}
+    DB_HOST: ${env:DB_HOST}
+    DB_USER: ${env:DB_USER}
+    DB_PASS: ${env:DB_PASS}
     DB_NAME: ${env:DB_NAME}
     BASE_URL_SOUTH: ${env:BASE_URL_SOUTH}
     BASE_URL_NORTH: ${env:BASE_URL_NORTH}

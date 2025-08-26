@@ -36,7 +36,7 @@ const LocationSelector = ({
   "
     >
       <SelectValue
-        placeholder="Location"
+        placeholder="251 North"
         className="py-2 data-[placeholder]:text-white"
       />
     </SelectTrigger>

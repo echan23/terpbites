@@ -39,12 +39,7 @@ const Searchbar = ({ setSelectedItems, location }: SearchbarProps) => {
       }
       const data: NutritionItem[] = await res.json();
 
-      //I wrote the query to match results with the search term, i'm too lazy to change it so we'll
-      // just show results that start with the search term here
-      const prefixResults = data.filter((item) =>
-        item.name.toLowerCase().startsWith(term.toLowerCase())
-      );
-      setResults(prefixResults);
+      setResults(data);
     } catch (err) {
       console.error("Error fetching data:", err);
       setResults([]);
