@@ -142,7 +142,7 @@ def lambda_handler(event, context):
             for future in as_completed(futures):
                 result = future.result()
                 if result:
-                    #print(result)
+                    print(result)
                     items_data.append(result)
 
         insert_data(conn, items_data)

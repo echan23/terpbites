@@ -43,4 +43,5 @@ functions:
     handler: run_scraping/lambda_function.lambda_handler
     events:
       - schedule:
+          timeout: 120
           rate: cron(0 10 * * ? *) #Triggers everyday at 5AM EST, 6AM during Daylight Savings
