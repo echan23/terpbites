@@ -22,12 +22,13 @@ provider:
     BASE_URL_NORTH: ${env:BASE_URL_NORTH}
     BASE_URL_Y: ${env:BASE_URL_Y}
     BASE_ITEM_URL: ${env:BASE_ITEM_URL}
-  vpc:
-    securityGroupIds:
-      - sg-0186dc4ba7f538452
-    subnetIds:
-      - subnet-0653c9ffc85d39214
-      - subnet-0f1795fd37eb3dac0
+
+  #vpc:
+  #  securityGroupIds:
+  #    - sg-0186dc4ba7f538452
+  #  subnetIds:
+  #    - subnet-0653c9ffc85d39214
+  #    - subnet-0f1795fd37eb3dac0
 
 functions:
   getFoodData:

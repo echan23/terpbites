@@ -8,8 +8,7 @@ const Footer = () => {
   return (
     <footer className="fixed bottom-0 bg-[#E21833] py-2 sm:py-3 md:py-4 w-full mb-safe-area-inset-bottom">
       <div className="flex items-center justify-center px-2 sm:px-4 relative">
-        {/*Hovercard for desktop*/}
-        <div className="hidden sm:block absolute left-2 sm:left-4">
+        {/*<div className="hidden sm:block absolute left-2 sm:left-4">
           <HoverCard openDelay={0} closeDelay={0}>
             <HoverCardTrigger className="text-white font-medium cursor-pointer text-sm">
               Check Us Out on Linkedin!
@@ -53,6 +52,7 @@ const Footer = () => {
             </HoverCardContent>
           </HoverCard>
         </div>
+        */}
 
         <div className="text-white font-medium text-xs sm:text-sm">
           © 2025 Terpbites
